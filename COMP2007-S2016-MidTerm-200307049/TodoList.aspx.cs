@@ -24,6 +24,8 @@ namespace COMP2007_S2016_MidTerm_200307049
             //if loading page for the first time, populate the grid
             if (!IsPostBack)
             {
+                Session["SortColumn"] = "TodoID"; //default sort column
+                Session["SortDirection"] = "Ascending"; // default sort direction
                 //get the todo list data
                 this.GetTodos();
             }
@@ -42,12 +44,13 @@ namespace COMP2007_S2016_MidTerm_200307049
             //connect to EF
             using (TodoConnection db = new TodoConnection())
             {
-                //query the Games table using EF and LINQ
+                string SortString = Session["SortColumn"].ToString() + " " + Session["SortDirection"].ToString();
+                //query the Todos table using EF and LINQ
                 var Todos = (from allTodos in db.Todos
                              select allTodos);
 
                 //bind results to gridview
-                TodoGridView.DataSource = Todos.AsQueryable().ToList();
+                TodoGridView.DataSource = Todos.AsQueryable().OrderBy(SortString).ToList();
                 TodoGridView.DataBind();
             }
         }
@@ -124,5 +127,61 @@ namespace COMP2007_S2016_MidTerm_200307049
             this.GetTodos();
         }
 
+        /**
+         * <summary>
+         * This method sorts the todos list gridview
+         * </summary>
+         * @method TodoGridView_Sorting
+         * @returns {void}
+         * */
+        protected void TodoGridView_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            // get the column to sort by
+            Session["SortColumn"] = e.SortExpression;
+
+            
+            //refresh the grid
+            this.GetTodos();
+
+            //toggle the direction from ASC and DSC
+            Session["SortDirection"] = Session["SortDirection"].ToString() == "Ascending" ? "Descending" : "Ascending";
+
+
+        }
+
+        /**
+         * <summary>
+         * This method sorts the todos list gridview
+         * </summary>
+         * @method TodoGridView_RowDataBound
+         * @returns {void}
+         * */
+        protected void TodoGridView_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (IsPostBack)
+            {
+                if (e.Row.RowType == DataControlRowType.Header)//if header row is clicked
+                {
+                    LinkButton linkButton = new LinkButton();
+
+                    for (int index = 0; index < TodoGridView.Columns.Count - 1; index++)
+                    {
+                        if (TodoGridView.Columns[index].SortExpression == Session["SortColumn"].ToString())
+                        {
+                            if (Session["SortDirection"].ToString() == "Ascending")
+                            {
+                                linkButton.Text = "<i class='fa fa-caret-up fa-lg'> </i>";
+                            }
+                            else
+                            {
+                                linkButton.Text = "<i class='fa fa-caret-down fa-lg'> </i>";
+                            }
+
+                            e.Row.Cells[index].Controls.Add(linkButton);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
