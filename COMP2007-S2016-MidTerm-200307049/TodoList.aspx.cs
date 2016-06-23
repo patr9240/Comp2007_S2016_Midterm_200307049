@@ -91,14 +91,38 @@ namespace COMP2007_S2016_MidTerm_200307049
 
         /**
          * <summary>
-         * This method changes the number of todos per page
+         * This event handler allows pagination for the TodoList page
          * </summary>
-         * @method TrackingWeekDropDown_SelectedIndexChanged
-         * @return {void}
+         * @method TodosGridView_PageIndexChanging
+         * @param {object} sender
+         * @param {GridViewPageEventArgs} e
+         * @returns {void}
+         * */
+        protected void TodosGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            //Set the new page number
+            TodoGridView.PageIndex = e.NewPageIndex;
+
+            //refresh the grid
+            this.GetTodos();
+        }
+        /**
+         * <summary>
+         * This method changes the amount of todos displayed per page when a different index is selected in the dropdown
+         * </summary>
+         * @method PageSizeDropDownList_SelectedIndexChanged
+         * @param {object} sender
+         * @param {EventArgs} e
+         * @returns {void}
          * */
         protected void PageSizeDropDownList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //this.GetGames();
+            //set the new page size
+            TodoGridView.PageSize = Convert.ToInt32(PageSizeDropDownList.SelectedValue);
+
+            //refresh
+            this.GetTodos();
         }
+
     }
 }

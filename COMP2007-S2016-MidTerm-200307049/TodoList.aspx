@@ -7,8 +7,8 @@
                 <h3>Todo List</h3>
                 <a href="/TodoDetails.aspx" class="btn btn-success btn-sm"><i class="fa fa-plus"></i>Add a Todo</a>
                 <asp:GridView ID="TodoGridView" AllowPaging="true" PageSize="3" runat="server" CssClass="table table-bordered table-striped table-hover"
-                    AutoGenerateColumns="false" DataKeyNames="TodoID" OnRowDeleting="TodoGridView_RowDeleting">
-
+                    AutoGenerateColumns="false" DataKeyNames="TodoID" OnRowDeleting="TodoGridView_RowDeleting" OnPageIndexChanging="TodosGridView_PageIndexChanging">
+                    <PagerStyle CssClass="pagination-ys" />
                     <Columns>
                         <asp:TemplateField HeaderText="No.">
                             <ItemTemplate>
